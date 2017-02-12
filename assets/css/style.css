@@ -1,0 +1,9 @@
+#guessbox, #lettersGuessedBox, .box {
+	font-size: 42px;
+	letter-spacing: 8px;
+	font-weight: bold;
+}
+
+section {
+	border: medium solid;
+}

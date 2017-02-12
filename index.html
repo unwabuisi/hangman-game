@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+
+	<!-- Loading jQuery script -->
+	<script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+
+	<!-- Link CSS Style Sheets -->
+	<link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
+
+	<!-- Link Bootstrap CDN -->
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+	<title>Hangman Game</title>
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-12"> 	
+				<center>
+				<h1>HangMan</h1>
+				<h2>Press any key to get started!</h2>
+				</center>
+		<div class="row">
+			<div class="col-md-6 col-lg-6 box">
+			<section>Guesses left <div id="guessesLeft"></div></section>
+			
+			</div>
+			<div class="col-md-6 col-lg-6 box" id="lettersGuessedBox">
+			<section>Letters Guessed</section>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6 col-lg-6">		
+				<center>
+					<section class="box" id="guessbox">
+					
+					</section>
+				</center>
+			</div>
+			<div class="col-md-6 col-lg-6">
+				<center>
+					<h1>Wins</h1>
+					<section class="box" id="wins">
+					
+					</section>
+				</center>
+			</div>	
+		</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script type="text/javascript">
+
+	var wordList = ["drake", "big sean", "j. cole", "kendrick lamar", "travis scott", "kanye west"]; // list of words to be guessed
+	var isCompleted = false; // this checks to see if the all the letters in the word have been guessed
+	var initwords = wordGuessBuilder(); // array with the word to be guessed at index 0 and blank version of word at index 1
+	var currentWord = initwords;
+	var lettersGuessed = [];
+	var numguessesLeft = initwords[0].length + 4;
+	var wins = 0;
+
+
+
+
+
+	// Creates a string with underscores where letters normally are and returns an array with the original word (index 0) and new string (index 1)
+	function wordGuessBuilder() {
+		var word = newWord();
+		var blankWord = ""; // new blank string to be appended
+		
+		// creates new string with _ where characters were
+		for (var i = 0; i < word.length; i++) {
+			if (word[i] == " ") {
+				blankWord += " ";
+			}
+			else if (word[i] == ".") {
+				blankWord += ".";
+			}
+			else{
+				blankWord += "_";
+			}
+		}
+		return [word, blankWord];
+	}
+
+
+	// sorts through blank string and updates it based on what letter is guessed
+	function wordParse(word,letter) {
+		wordSolution = initwords[0];
+		wordGuess = word[1];
+
+		blankWord = "";
+
+		for (var i = 0; i < wordSolution.length; i++) {
+			
+			// if the letter pressed is in the solution, it is placed in the string
+			if (wordSolution[i] === letter) {
+				blankWord += letter;
+			}
+			else if (wordGuess[i] != "_") {
+				blankWord += wordGuess[i];
+			}
+			else {
+				blankWord += "_";
+			}
+		}
+		return [wordSolution, blankWord];
+	}
+
+
+	// displays blank spaces and underscores in HTML element
+	function displayWord(wordToDisplay,letter) {
+		return $("#guessbox").text(wordToDisplay);
+	}
+
+	// displays which letters have been guessed
+	function displayGuess (lettersToDisplay) {
+		return $("#lettersGuessedBox").text(lettersToDisplay);
+	}
+
+	function displayGuessesLeft () {
+		return $("#guessesLeft").text(numguessesLeft);
+	}
+
+	// randomly chooses a new word from wordList
+	function newWord() {
+		return wordList[randomInt(0,wordList.length-1)];
+	}
+
+	// returns random integer inclusive
+	function randomInt(min,max) {
+		return Math.floor(Math.random() * (max-min + 1)) + min;
+	}
+
+	// checks if the letter that is pressed has been guessed previously
+	function guessChecker(letter,letters) {
+
+		// letter has been guessed already
+		if (letters.indexOf(letter) >=0) {
+
+
+		}
+		else {
+			letters.push(letter);
+		}
+	}
+
+	// captures which key is pressed and stores it as userGuess
+	document.onkeyup = function(event) {
+		userGuess = event.key;
+	
+
+		// keycodes 65 - 90 are A - Z; space is 32
+		if ((event.keyCode >= 65) && (event.keyCode <= 90)) {
+
+
+			if (isCompleted) {
+				wins +=1;
+			}
+			else {
+
+				currentWord = wordParse(currentWord,userGuess);
+				displayWord(currentWord[1],userGuess);	
+
+				guessChecker(userGuess,lettersGuessed);	
+				displayGuess(lettersGuessed);
+
+
+				displayGuessesLeft();
+			}
+
+
+		}
+		
+
+
+
+	}
+		
+
+
+
+
+
+	</script>
+</body>
+</html>
+
+<!-- 
+** Hangman Game **
+
+1. There is word that needs to be guessed 
+2. Blank spaces for each letter in the word are displayed
+3. User guesses a letter by pressing letter
+	3a. There are X amount of guesses available
+	3b. There is a bank that shows all the letters that have been guessed
+4. When a letter is pressed
+	4a. If letter is in the word, the letter should appear where the blank space was
+	4b. If letter is not in the word, a guess is removed and the letter is added to bank of guessed letters
+5. 
